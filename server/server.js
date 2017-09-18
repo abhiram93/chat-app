@@ -5,7 +5,8 @@ const socketIO = require('socket.io');
 
 const publicPath = path.join(__dirname,'../public');
 const generateMessage = require('./util/message').generateMessage;
-
+const generateLocationMessage = require('./util/message').generateLocationMessage;
+generateLocationMessage
 var app = express();
 var server = http.createServer(app);
 var io = socketIO(server);
@@ -28,13 +29,11 @@ io.on('connection', function(socket) {
 
     io.emit('newMessage',generateMessage(message.from,message.text));
     callback('This is from server');
-    // socket.broadcast.emit('newMessage', {
-    //   from:message.from,
-    //   text:message.text,
-    //   createdAt:new Date().getTime()
-    // });
+  });
 
-  })
+  socket.on('createLocationMessage', function (coords) {
+    io.emit('newLocationMessage',generateLocationMessage('Admin',coords.latitude,coords.longitude));
+  });
 
 });
 
