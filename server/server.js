@@ -17,15 +17,33 @@ io.on('connection', function(socket) {
     console.log(' inside disConnect');
   });
 
+  socket.emit('newMessage', {
+    from:'Admin',
+    text:'Welcome to the chat',
+    createdAt:new Date().getTime()
+  })
+
+  socket.broadcast.emit('newMessage', {
+    from:'Admin',
+    text:'New usser joined',
+    createdAt:new Date().getTime()
+  })
 
   socket.on('createMessage',function (message) {
     console.log('Message received',message);
 
-    io.emit('newMessage',{
-      from:message.from,
-      text:message.text,
-      createdAt:new Date().getTime()
-    })
+    // io.emit('newMessage',{
+    //   from:message.from,
+    //   text:message.text,
+    //   createdAt:new Date().getTime()
+    // });
+
+    // socket.broadcast.emit('newMessage', {
+    //   from:message.from,
+    //   text:message.text,
+    //   createdAt:new Date().getTime()
+    // });
+
   })
 
 });
