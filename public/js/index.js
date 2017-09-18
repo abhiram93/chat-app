@@ -10,10 +10,11 @@ socket.on('disconnect',function () {
 });
 
 socket.on('newMessage',function (obj) {
-    console.log('Message received',obj);
+
+    var formattedTime = moment(obj.createdAt).format(' h:mm a');
 
     var li =document.createElement("li");
-    var text = document.createTextNode(obj.from+":"+obj.text);
+    var text = document.createTextNode(obj.from+formattedTime+":"+obj.text);
     li.appendChild(text);
     var ul = document.getElementById("messages").appendChild(li);
 });
@@ -44,16 +45,16 @@ form.addEventListener("submit", function(e){
 
 socket.on('newLocationMessage', function (coords) {
 
-    
+    var formattedTime = moment(coords.createdAt).format(' h:mm a');
     var newLi =document.createElement("li");
     var a =document.createElement("a");
     var text = document.createTextNode('My Location');
     a.textContent = 'My Location';
     a.setAttribute('href',coords.url);
-    
-    newLi.textContent = coords.user+':';
+
+    newLi.textContent = coords.user+formattedTime+':';
     newLi.appendChild(a);
-    
+
     var ul = document.getElementById("messages").appendChild(newLi);
 
 });
@@ -61,7 +62,7 @@ socket.on('newLocationMessage', function (coords) {
 
 
 btnLocation.addEventListener('click', function() {
-    
+
     btnLocation.disabled = true;
     btnLocation.textContent = "Sending Location... "
     if(!navigator.geolocation) {
@@ -80,3 +81,6 @@ btnLocation.addEventListener('click', function() {
     btnLocation.disabled = false;
     btnLocation.textContent = "Send Location";
 });
+
+
+console.log(moment().valueOf());
