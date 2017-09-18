@@ -1,23 +1,6 @@
 var socket = io();
 var btnLocation = document.getElementById('send-location');
 
-socket.on('connect', function () {
-    console.log('Connected to server');
-});
-
-socket.on('disconnect',function () {
-    console.log('Disconnected from server');
-});
-
-socket.on('newMessage',function (obj) {
-
-    var formattedTime = moment(obj.createdAt).format(' h:mm a');
-
-    var li =document.createElement("li");
-    var text = document.createTextNode(obj.from+formattedTime+":"+obj.text);
-    li.appendChild(text);
-    var ul = document.getElementById("messages").appendChild(li);
-});
 
 socket.emit('createMessage',{
     from:'ww@wb.com',
@@ -43,19 +26,54 @@ form.addEventListener("submit", function(e){
 
 },false);
 
+
+socket.on('connect', function () {
+    console.log('Connected to server');
+});
+
+socket.on('disconnect',function () {
+    console.log('Disconnected from server');
+});
+
+socket.on('newMessage',function (obj) {
+
+    var formattedTime = moment(obj.createdAt).format(' h:mm a');
+    var template = document.getElementById("message-template").innerHTML;
+    
+    var html = Mustache.render(template,{
+        text:obj.text,
+        from:obj.from,
+        createdAt:formattedTime
+    });
+    console.log(typeof html);
+    /*var li =document.createElement("li");
+    li.classList.add('message'); 
+    var text = document.createTextNode(obj.from+formattedTime+":"+obj.text);
+    li.appendChild(text);*/
+    var ul = document.getElementById("messages").insertAdjacentHTML("beforebegin",html);
+});
+
+
+
 socket.on('newLocationMessage', function (coords) {
 
     var formattedTime = moment(coords.createdAt).format(' h:mm a');
-    var newLi =document.createElement("li");
+    var template = document.getElementById("location-message-template").innerHTML;
+    /*var newLi =document.createElement("li");
     var a =document.createElement("a");
     var text = document.createTextNode('My Location');
     a.textContent = 'My Location';
     a.setAttribute('href',coords.url);
-
+    newLi.classList.add('message'); 
     newLi.textContent = coords.user+formattedTime+':';
-    newLi.appendChild(a);
+    newLi.appendChild(a);*/
+     var html = Mustache.render(template,{
+        user:coords.user,
+        url:coords.url,
+        createdAt:formattedTime
+    });
 
-    var ul = document.getElementById("messages").appendChild(newLi);
+     var ul = document.getElementById("messages").insertAdjacentHTML("beforebegin",html);
 
 });
 
