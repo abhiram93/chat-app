@@ -1,17 +1,35 @@
 const path = require('path');
+const http = require('http');
 const express = require('express');
+const socketIO = require('socket.io');
 
 const publicPath = path.join(__dirname,'../public');
-
 var app = express();
+var server = http.createServer(app);
+var io = socketIO(server);
 
 app.use(express.static(publicPath));
 
-// app.get('/',function (req,res) {
-//   res.sendFile(publicPath+'/index.html')
-// })
+io.on('connection', function(socket) {
+  console.log('New User connected');
+
+  socket.on('disconnect', function () {
+    console.log(' inside disConnect');
+  });
 
 
-app.listen(process.env.PORT||3000,function () {
+  socket.on('createMessage',function (message) {
+    console.log('Message received',message);
+
+    io.emit('newMessage',{
+      from:message.from,
+      text:message.text,
+      createdAt:new Date().getTime()
+    })
+  })
+
+});
+
+server.listen(process.env.PORT||3000,function () {
   console.log('Server is running');
 })
