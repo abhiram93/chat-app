@@ -1,6 +1,25 @@
 var socket = io();
 var btnLocation = document.getElementById('send-location');
 
+function scrollToBottom() {
+
+    var messages = document.getElementById('messages');
+    // var newMessage = messages.childNodes('li:last-child');
+
+    var clientHeight = messages.clientHeight;
+    var scrollTop = messages.scrollTop;
+    var scrollHeight =  messages.scrollHeight;
+    // var newMessageHeight =  messages.height;
+    //var lastMessageHeight =  newMessageHeigh;
+
+
+    if(clientHeight+scrollTop>=scrollHeight) {
+    //    window.scrollTo(0,document.body.scrollHeight);
+
+
+    }
+}
+
 
 socket.emit('createMessage',{
     from:'ww@wb.com',
@@ -39,7 +58,7 @@ socket.on('newMessage',function (obj) {
 
     var formattedTime = moment(obj.createdAt).format(' h:mm a');
     var template = document.getElementById("message-template").innerHTML;
-    
+
     var html = Mustache.render(template,{
         text:obj.text,
         from:obj.from,
@@ -51,6 +70,7 @@ socket.on('newMessage',function (obj) {
     var text = document.createTextNode(obj.from+formattedTime+":"+obj.text);
     li.appendChild(text);*/
     var ul = document.getElementById("messages").insertAdjacentHTML("beforebegin",html);
+ //   scrollToBottom();
 });
 
 
@@ -67,13 +87,14 @@ socket.on('newLocationMessage', function (coords) {
     newLi.classList.add('message'); 
     newLi.textContent = coords.user+formattedTime+':';
     newLi.appendChild(a);*/
-     var html = Mustache.render(template,{
+    var html = Mustache.render(template,{
         user:coords.user,
         url:coords.url,
         createdAt:formattedTime
     });
 
-     var ul = document.getElementById("messages").insertAdjacentHTML("beforebegin",html);
+    var ul = document.getElementById("messages").insertAdjacentHTML("beforebegin",html);
+//    scrollToBottom();
 
 });
 
